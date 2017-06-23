@@ -1,0 +1,34 @@
+L1448IRS3B_cont_robust-0.5.fits
+L1448IRS3B_cont_robust-0.5_H13COp_all.png
+51.4016208333
+30.7550666667
+0.00100
+0.0361
+13.
+0.1
+230.
+L1448 IRS3B Cont 870micron
+98
+y
+0.00100
+n
+n
+sqrt
+color
+ds9bb
+
+white
+L1448IRS3B_H13COp_image_taper1500k_b.fits
+5
+10
+0.0016
+y
+L1448IRS3B_H13COp_image_taper1500k_r.fits
+5
+10
+0.001
+y
+L1448IRS3B_cont_robust-0.5_H13COp_mom0_all.png
+L1448 IRS3B H13COp
+gray
+black
