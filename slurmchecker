@@ -1,0 +1,28 @@
+#=========================================================
+uname=`whoami`
+queue=`squeue --start -u ${uname} | awk '{print $6}' | sed '1d' | head -n1`
+qnum=`squeue --start -u ${uname} | sed '1d' | wc | awk '{print $1}'`
+cjob=`squeue -u $uname | sed '1d' | wc | awk '{print $1}'`
+ctime=`date +%s`
+if [[ -v $queue ]] ; then qtime=`date -d${queue} +%s` else qtime=$ctime ;fi
+timedif="$(( $qtime - $ctime))"
+convertsecs() {
+ ((h=${1}/3600))
+ ((m=(${1}%3600)/60))
+ ((s=${1}%60))
+ printf "%02d:%02d:%02d\n" $h $m $s
+}
+if [[ ${cjob} >0 ]] ; then
+    echo -e "${Green}Current jobs: ${cjob}${NC}"
+else
+    echo -e "${Yellow}No jobs running ${NC}"
+fi
+if [[ ${qnum} == 0 ]] ; then
+    echo -e "${Yellow}No jobs queued${NC}"
+else
+    echo -e "${Green}#Jobs: ${qnum}, Starting $(convertsecs ${timedif}) from now.${NC}
+"
+fi
+#=========================================================
+
+
