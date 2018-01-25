@@ -1,5 +1,4 @@
 import aplpy
-print aplpy.version.version
 import numpy as np
 import pylab as P
 import matplotlib.pyplot as mpl
@@ -12,44 +11,12 @@ import os
 #import viridis
 from astropy import wcs
 from astropy.io import fits
-'''
-print len(sys.argv)
-if len(sys.argv) != 31:  # the program name and the two arguments
-  # stop the program and print an error message
-  sys.exit("python images-1panel.py filename outfilename ra dec minpixval maxpixval separation size(arcsec) scalebar(arcsec) distance name")
 
-image = str(sys.argv[1])
-outfilename=str(sys.argv[2])
-ra = float(sys.argv[3])
-dec = float(sys.argv[4])
-minpixval = float(sys.argv[5])
-maxpixval = float(sys.argv[6])
-size = float(sys.argv[7])
-scalebar = float(sys.argv[8])
-distance=float(sys.argv[9])
-name=str(sys.argv[10])
-pa=float(sys.argv[11])
-showoutflow=str(sys.argv[12])
-sigma=float(sys.argv[13])
-showcontours=str(sys.argv[14])
-showsources=str(sys.argv[15])
-imagestretch=str(sys.argv[16])
-redimage=str(sys.argv[17])
-redstart=float(sys.argv[18])
-redinterval=float(sys.argv[19])
-rednoise=float(sys.argv[20])
-showredimage=str(sys.argv[21])
-blueimage=str(sys.argv[22])
-bluestart=float(sys.argv[23])
-blueinterval=float(sys.argv[24])
-bluenoise=float(sys.argv[25])
-showblueimage=str(sys.argv[26])
-colororgray=str(sys.argv[27])
-colormap=str(sys.argv[28])
-plotlabel=str(sys.argv[29])
-textcolor=str(sys.argv[30])
-'''
-def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,name,pa,showoutflow,sigma,showcontours,showsources,imagestretch,redimage,redstart,redinterval,rednoise,showredimage,blueimage,bluestart,blueinterval,bluenoise,showblueimage,colororgray,colormap,plotlabel,textcolor):
+def main(image,outfilename,ra,dec,minpixval,maxpixval,\
+   size,scalebar,distance,name,pa,showoutflow,sigma,showcontours,showsources,\
+   imagestretch,redimage,redstart,redinterval,rednoise,\
+   showredimage,blueimage,bluestart,blueinterval,bluenoise,showblueimage,\
+   colororgray,colormap,plotlabel,textcolor,extension):
    def standardStuff():
       gc1.axis_labels.set_font(size='x-large')
       gc1.tick_labels.set_style('colons')
@@ -123,7 +90,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
          dyblue=ypt1
          dxred=xpt2
          dyred=ypt2
-      print dxblue*3600.0,dyblue*3600.0,dxred*3600.0,dyred*3600.0
+      #print dxblue*3600.0,dyblue*3600.0,dxred*3600.0,dyred*3600.0
    #   gc1.show_arrows(ra+dxblue/4.0,dec+dyblue/4.0, dxblue, dyblue, color='cyan')
    #   gc1.show_arrows(ra+dxred/4.0,dec+dyred/4.0, dxred, dyred, color='red')
 
@@ -142,11 +109,12 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
       contours3=np.arange(contstart*40.0,contstart*100.0,continterval*10.0,dtype='float32')
       poscontours=np.concatenate((contours1,contours2,contours3))
       negcontours=poscontours[::-1]*(-1.0)
-      contours=np.concatenate((poscontours,negcontours))*contnoise
+      contours = poscontours * contnoise
+      #contours=np.concatenate((poscontours,negcontours))*contnoise
       
       return contours
 
-   fig = mpl.figure(figsize=(6,5.5))
+   fig = mpl.figure(figsize=(16,12))
 
    dx=0.0
    dy=0.0
@@ -154,8 +122,8 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    #fitscut2d(image,image+'cut.fits',ra,dec,300)
    #image=image+'cut.fits'
 
-   print name, image, ra,dec
-   gc1 = aplpy.FITSFigure(image, figure=fig, subplot=[0.2+dx,0.1+dy,0.75,0.8182])
+   #print name, image, ra,dec
+   gc1 = aplpy.FITSFigure(image, figure=fig, subplot=[0.15+dx,0.1+dy,0.7,0.9])
 
    if colororgray == 'color':
       gc1.show_colorscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,cmap=colormap)
@@ -178,6 +146,10 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
 
+   gc1.add_colorbar()
+   gc1.colorbar.set_width(0.1)
+   gc1.colorbar.set_location('right')
+
    standardStuff()
 
    if showredimage == 'y':
@@ -191,12 +163,10 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    if pa < 360.0 and showoutflow == 'y':
       drawOutflow()
 
-
-
    gc1.list_layers()
    #os.system('rm -rf '+ image)
    #os.system('rm -rf '+ redimage)
    #os.system('rm -rf '+ blueimage)
 
-   fig.savefig(outfilename,dpi=200)
+   fig.savefig(outfilename,dpi=400,adjust_bbox=True,format=extension)
 
