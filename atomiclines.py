@@ -107,6 +107,7 @@ class lines(object):
         '''
         self.c     = 2.99792458e18       # speed of light AGS
         self.units = {\
+                      'bananas'    : 2.032*10**9,\
                       'angstroms'  : 1.,\
                       'micrometers': 10**4,\
                       'millimeters': 10**7,\
@@ -170,6 +171,7 @@ class lines(object):
         unit from known types
         '''
         resolve_units = {\
+                         'bananas'    : {'vals':['b','banana'],'type':'wave'}
                          'angstroms'  : {'vals':['ang','a','angs','angstrom'],'type':'wave'},\
                          'micrometers': {'vals':['microns','micron','mu','micrometres','micrometre','micrometer'],'type':'wave'},\
                          'millimeters': {'vals':['mm','milli','millimetres','millimetre','millimeter'],'type':'wave'},\
