@@ -10,7 +10,7 @@ Misc  : Houses all useful atomic lines and short program for parsing
 '''
 # import standard modules
 from copy import deepcopy
-
+import numpy as np
 
 atomiclines={\
     'nir':{\
@@ -65,7 +65,7 @@ atomiclines={\
         "Hbeta":{'val':[4862.69],'unit':'angstrom'},"Halpha":{'val':[6564.61],'unit':'angstrom'},\
         "He I":{'val':[0.388975,0.587730,0.6679996,1.0833],'unit':'micron'},\
         'Humphreys10-6':{'val':[5.12865,4.67251,4.17080,4.02087,3.90755,3.81945,3.74940,3.69264,3.64593,\
-                         3.60697,3.57410,3.54610,3.52203,3.50116,3.48296],'unit':'microns'},\
+                                3.60697,3.57410,3.54610,3.52203,3.50116,3.48296],'unit':'microns'},\
         "K I":{'val':[1.1682,1.1765,1.2518,1.2425,1.5152],'unit':'micron'},\
         "O I":{'val':[1.129,0.630204,0.5578887],'unit':'micron'},\
         "O II":{'val':[3726,3727.09,3729,3729.88],'unit':'micron'},\
@@ -122,26 +122,59 @@ class lines(object):
                       }
         self.types = ['nir']
 
-    def return_lines(self,wtype='nir',bu='meters'):
+    def __call__(self,wtype='nir',bu='meters',x1=-1,x2=-1):
         '''
-        Main function for gathering lines
+        Allows repeat calls and inline calling of function.
+        Main process to gather all files
+        This returns object of itself. Use return functions to get needed items
         '''
         try:
-            if (wtype == self.type) and (bu == self.bu) and (self.fulllines):
-                return self.fulllines
+            if (wtype == self.type) and ((bu == self.bu[1]) or (bu == self.bu[2])) and (self.fulllines):
+                regen  = False
+                failed = False
+                pass
+            else:
+                failed = True
+                pass
         except:
-            pass
-        finally:
-            self.alllines  = deepcopy(atomiclines)
-            self.bu   = self.resolve_name(bu.lower())[1:3]
-            self.type = self.resolve_type(wtype.lower())
-            return self.get_lines()
+            failed = True
 
-    def main(self,wtype='nir',bu='meters'):
+        if failed:
+            self.alllines  = deepcopy(atomiclines)
+            self.bu   = self.resolve_units(bu.lower())
+            self.type = self.resolve_type(wtype.lower())
+            self.find_lines()
+            regen  = True
+            failed = False
+
+        try:
+            if ((x1 == self.x1) and (x2 == self.x2) and (self.region)) and not regen:
+                regen = False
+                pass    
+            else:
+                regen = True
+                pass       
+        except:
+            regen = True
+
+        if regen:
+            self.find_regions(x1,x2)
+            self.x1,self.x2 = x1,x2
+            regen = False
+
+        return self
+
+    def return_lines(self):
         '''
-        Reference returnline function
+        Returns all lines
         '''
-        return self.return_lines(wtype,bu)
+        return self.fulllines
+
+    def return_regions(self):
+        '''
+        Returns all lines within region <= all lines
+        '''
+        return self.region
 
     def get_params(self):
         '''
@@ -155,15 +188,38 @@ class lines(object):
         '''
         return vars(self)
 
+    def get_types(self):
+        '''
+        Returns the types of line regions that have been defined
+        '''
+        return [x for x in self.types]
+
+    def get_units(self):
+        '''
+        Returns the units possible in the current setup
+        '''
+        return [x for x in self.units]
+
+    def clear(self):
+        '''
+        Clears major memory hogs for reset
+        '''
+        self.alllines   = None
+        self.fulllines  = None
+        self.region     = None
+        self.type       = None
+        self.bu         = None
+        self.x1,self.x2 = None,None
+
     def resolve_units(self,bu):
         '''
         Resolves the units and conversion factor
         '''
         tmp = self.resolve_name(bu)
         if tmp[0]:
-            return self.units[tmp[1]]
+            return tmp
         else:
-            raise RuntimeError('Unit: <{}> was not found in list of units: {}'.format(bu,self.get_units()))
+            self.exit('Unit: <{}> was not found in list of units: {}'.format(bu,self.get_units()))
 
     def resolve_name(self,bu):
         '''
@@ -171,7 +227,7 @@ class lines(object):
         unit from known types
         '''
         resolve_units = {\
-                         'bananas'    : {'vals':['b','banana'],'type':'wave'}
+                         'bananas'    : {'vals':['b','banana'],'type':'wave'},\
                          'angstroms'  : {'vals':['ang','a','angs','angstrom'],'type':'wave'},\
                          'micrometers': {'vals':['microns','micron','mu','micrometres','micrometre','micrometer'],'type':'wave'},\
                          'millimeters': {'vals':['mm','milli','millimetres','millimetre','millimeter'],'type':'wave'},\
@@ -189,30 +245,17 @@ class lines(object):
             for i in resolve_units:
                 for k in resolve_units[i]['vals']:
                     if bu == k:
-                        return True,i,resolve_units[i]['type']
+                        return True,bu,i,resolve_units[i]['type']
             return False,bu
         else:
-            return True,bu,resolve_units[bu]['type']
-
-    def get_types(self):
-        '''
-        Returns the types of line regions that have been defined
-        '''
-        return [x for x in self.types]
-
-    def get_units(self):
-        '''
-        Returns the units possible in the current setup
-        '''
-        return [x for x in self.units]
-
+            return True,bu,bu,resolve_units[bu]['type']
 
     def resolve_type(self,typel):    
         '''
         Resolves Type
         '''
         if typel not in self.get_types():
-            raise RuntimeError('Type: <{}> was not found in list of units: {}'.format(typel,self.get_types()))
+            self.exit('Type: <{}> was not found in list of types: {}'.format(typel,self.get_types()))
         else:
             return typel
 
@@ -228,14 +271,14 @@ class lines(object):
             return self.units['hz']/self.units[fin] * self.c * self.units[init]/self.units['angstroms']
 
 
-    def get_lines(self):    
+    def find_lines(self):    
         '''
         Returns the dictionary of all converted types
         '''
         self.fulllines = self.alllines[self.type]
         for i in self.alllines[self.type]:
-            initialun   = self.resolve_name(self.alllines[self.type][i]['unit'])[1:3]
-            finalun     = self.bu
+            initialun   = self.resolve_name(self.alllines[self.type][i]['unit'])[2:4]
+            finalun     = self.bu[2:4]
             initialconv = self.conversion(*initialun,*finalun)
             temp = []
             for k,j in enumerate(self.alllines[self.type][i]['val']):
@@ -244,4 +287,68 @@ class lines(object):
                 else:
                     temp.append(initialconv/j)
             self.fulllines[i] = temp
-        return self.fulllines
+
+    def find_regions(self,x1,x2):
+        '''
+        returns line names within a region
+        if you modify the line type, you will want to regen the region
+        '''
+        self.region = {}
+        for key in self.fulllines:
+            a = np.array(self.fulllines[key])
+            if (x1 != -1) and (x2 != -1):
+                ind = np.where(np.logical_and(a>=x1,a<=x2))
+            elif (x1 == -1) and (x2 == -1):
+                ind = (np.arange(0,a.shape[0],1),)
+            elif (x1 == -1):
+                ind = np.where(a<=x2)
+            elif (x2 == -1):
+                ind = np.where(a>=x1)
+            ind = np.array([x for y in ind for x in y])
+            if ind.shape[0] != 0:
+                self.region[key] = a[ind].tolist()
+
+    def find_aperture(self,data,ap=1):
+        '''
+        returns a new key value pair dictionary
+        where the new data is suppressed 
+        within some ap so less overlap
+        '''
+        return True
+        tmp = {}
+        # reverses data dictionary keeps unique vals
+        for key,vals in data.items():
+            for x in vals:
+                if tmp[str(x)]:
+                    tmp[str(x)] = '{},{}'.format(tmp[str(x)],key)
+                else:
+                    tmp[str(x)] = key
+        # reduce tmp to its final form
+        ite = 0
+        keys = tmp.keys()
+        key0 = float(keys[ite])
+        nkey = []
+        while ite < (len(tmp.items()) - 1):
+            key1 = float(keys[ite+1])
+            if (key1-key0) > ap:
+                nkey.append(key0)
+                key0 = key1
+            if ite == (len(tmp.items()) - 2):
+                nkey.append(key0)
+                key0 = key1
+            # need to work on edge case
+            ite ++
+
+
+    def exit(self,exitcode,exitparam=0):
+        '''
+        Handles error codes and exits nicely
+        '''
+        print(exitcode)
+        print('v--------Ignore exit codes below--------v')
+        self.clear()
+        if exitparam == 0:
+            return None
+        else:
+            from sys import exit
+            exit(0)

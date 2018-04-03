@@ -146,9 +146,9 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
    gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
 
-   gc1.add_colorbar()
-   gc1.colorbar.set_width(0.1)
-   gc1.colorbar.set_location('right')
+   #gc1.add_colorbar()
+   #gc1.colorbar.set_width(0.1)
+   #gc1.colorbar.set_location('right')
 
    standardStuff()
 

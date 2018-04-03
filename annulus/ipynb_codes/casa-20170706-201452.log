@@ -1,0 +1,10 @@
+2017-07-06 20:15:03	INFO	casa::::	---
+2017-07-06 20:15:03	INFO	casa::::	CASA Version 4.7.2-REL (r39762)
+2017-07-06 20:15:03	INFO	casa::::	  Tagged on: 2017-03-08 10:01:58 UTC
+2017-07-06 20:17:50	INFO	viewer::::	
+2017-07-06 20:17:50	INFO	viewer::::+	##########################################
+2017-07-06 20:17:50	INFO	viewer::::+	##### Begin Task: viewer             #####
+2017-07-06 20:17:50	INFO	viewer::::	viewer(infile="",displaytype="raster",channel=0,zoom=1,outfile="",
+2017-07-06 20:17:50	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2017-07-06 20:17:50	INFO	viewer::::	##### End Task: viewer               #####
+2017-07-06 20:17:50	INFO	viewer::::+	##########################################

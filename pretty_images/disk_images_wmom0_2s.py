@@ -186,7 +186,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    #image=image+'cut.fits'
 
    #print name, image, ra,dec
-   gc1 = aplpy.FITSFigure(image, figure=fig, subplot=[0.15+dx,0.1+dy,0.7,0.9])
+   gc1 = aplpy.FITSFigure(image, figure=fig)
 
    if colororgray == 'color':
       gc1.show_colorscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,cmap=colormap)
@@ -208,9 +208,9 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
    gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
-   gc1.add_colorbar()
-   gc1.colorbar.set_width(0.1)
-   gc1.colorbar.set_location('right')
+   #gc1.add_colorbar()
+   #gc1.colorbar.set_width(0.1)
+   #gc1.colorbar.set_location('right')
 
    standardStuff()
 
