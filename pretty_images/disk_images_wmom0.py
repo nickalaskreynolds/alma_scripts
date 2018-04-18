@@ -17,6 +17,11 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
    imagestretch,redimage,redstart,redinterval,rednoise,\
    showredimage,blueimage,bluestart,blueinterval,bluenoise,showblueimage,\
    colororgray,colormap,plotlabel,textcolor,extension):
+
+   dele = mpl.figure(figsize=(7,7))
+   f = aplpy.FITSFigure(redimage, figure=dele)
+   f.add_beam()
+
    def standardStuff():
       gc1.axis_labels.set_font(size='x-large')
       gc1.tick_labels.set_style('colons')
@@ -28,7 +33,6 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
       gc1.axis_labels.set_ypad(-20)
       #gc1.tick_labels.hide()
       #gc1.ticks.hide()
-
       gc1.add_scalebar(scalebar/3600.0,color=textcolor)
       gc1.scalebar.set_corner('bottom left')
       gc1.scalebar.set_label(str(scalebar)+'" ('+str(scalebar*distance)+' AU)')
@@ -36,6 +40,8 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
       gc1.scalebar.set_font_size('xx-large')
 
       gc1.add_beam()
+      for x in f.beam._base_settings:
+          gc1.beam._base_settings[x] = f.beam._base_settings[x]
       gc1.beam.set_corner('bottom right')
       gc1.beam.set_color(textcolor)
       gc1.beam.set_hatch('+')
