@@ -17,6 +17,20 @@ outputvis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.triplet'
 phasecenter='J2000 03h25m36.324 30d45m14.941'
 go()
 
+default(fixvis)
+vis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.375kl'
+outputvis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.375kl.triplet'
+phasecenter='J2000 03h25m36.324 30d45m14.941'
+go()
+
+os.system('rm -rf L1448IRS3B.cont.ms.apselfcal.concat.triplet')
+default(fixvis)
+vis='L1448IRS3B.cont.ms.apselfcal.concat'
+outputvis='L1448IRS3B.cont.ms.apselfcal.concat.triplet'
+phasecenter='J2000 03h25m36.321 30d45m15.049'
+go()
+
+
 os.system('rm -rf L1448IRS3B.cont.ms.apselfcal.concat.wide')
 default(fixvis)
 vis='L1448IRS3B.cont.ms.apselfcal.concat'

@@ -1,4 +1,3 @@
-sourcems = 'L1448IRS3B.cont.ms.apselfcal.concat.triplet'
 
 spws=[['4','10','16'],
 ['3','9','15'],
@@ -13,6 +12,25 @@ names=['C17O',
 'CO',
 'SiO',
 '335.5GHz']
+
+sourcems = 'L1448IRS3B.cont.ms.apselfcal.concat.triplet'
+
+dire = 'conttripuv375'
+
+for x in range(len(spws)):
+    for y in spws[x]:
+        findir="{}/{}.{}".format(dire,names[x],y)
+        if not os.path.isdir(findir):
+            os.system('mkdir -p {}'.format(findir))
+        else:
+            os.system('rm -rf {}/*'.format(findir))
+        split(vis=sourcems,spw=y,datacolumn='data',width=999,keepflags=False,outputvis='{}/{}.{}.{}.ms'.format(findir,sourcems,names[x],y))
+        exportuvfits(vis='{}/{}.{}.{}.ms'.format(findir,sourcems,names[x],y),fitsfile='{}/{}.{}.{}.uv.fits'.format(findir,sourcems,names[x],y))
+
+# python3 UVFITS_to_HDF5.py -i conttripuv375 -o L1448IRS3B.cont.ms.apselfcal.concat.triplet.375kl.hdf5 --uvmax 375000 --uvmin 0 -fc
+
+
+sourcems = 'L1448IRS3B.cont.ms.apselfcal.concat.triplet'
 
 dire = 'conttrip'
 

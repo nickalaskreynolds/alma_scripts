@@ -18,7 +18,8 @@ regridms           =  True
 datacolumn         =  "data"
 restfreq           =  "337061.104MHz"
 outframe           =  "lsrk"
-outputvis          =  'L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.tavg.chavg'
+maxuvdistance      =  '375klambda'
+outputvis          =  'L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.375kl'
 go()
 
 default(mstransform)

@@ -1,38 +1,36 @@
 #!/usr/bin/env python3
 
-while True:
-    try:
-        from pdspy.constants.physics import c, m_p, G
-        from pdspy.constants.physics import k as k_b
-        from pdspy.constants.astronomy import M_sun, AU
-        from matplotlib.backends.backend_pdf import PdfPages
-        import pdspy.modeling.mpi_pool
-        import pdspy.interferometry as uv
-        import pdspy.spectroscopy as sp
-        import pdspy.modeling as modeling
-        import pdspy.imaging as im
-        import pdspy.misc as misc
-        import matplotlib.pyplot as plt
-        import matplotlib.ticker as ticker
-        import matplotlib.patches as patches
-        import matplotlib.patheffects as PathEffects
-        from matplotlib.colors import LinearSegmentedColormap
-        import pdspy.table
-        import pdspy.dust as dust
-        import pdspy.gas as gas
-        import pdspy.mcmc as mc
-        import scipy.signal
-        import argparse
-        import numpy
-        import time
-        import sys
-        import os
-        import emcee
-        import corner
-        from mpi4py import MPI
-    except FutureWarning:
-        continue
-    break
+
+from pdspy.constants.physics import c, m_p, G
+from pdspy.constants.physics import k as k_b
+from pdspy.constants.astronomy import M_sun, AU
+from matplotlib.backends.backend_pdf import PdfPages
+import pdspy.modeling.mpi_pool
+import pdspy.interferometry as uv
+import pdspy.spectroscopy as sp
+import pdspy.modeling as modeling
+import pdspy.imaging as im
+import pdspy.misc as misc
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import matplotlib.patches as patches
+import matplotlib.patheffects as PathEffects
+from matplotlib.colors import LinearSegmentedColormap
+import pdspy.table
+import pdspy.dust as dust
+import pdspy.gas as gas
+import pdspy.mcmc as mc
+import scipy.signal
+from copy import deepcopy
+import argparse
+import numpy
+import time
+import sys
+import os
+import emcee
+import corner
+from mpi4py import MPI
+
 
 comm = MPI.COMM_WORLD
 
@@ -49,7 +47,7 @@ s  = "source name to compile with, just a placeholder"
 sf = "smoothing function variables (depreciated)"
 cl = "contour levels to use"
 pc = "overplot continuum?"
-gr = "generate all residuals?"
+gr = "generate fits file or residual?"
 
 parser = argparse.ArgumentParser("This programs is simply for plotting" +
                                  "it reads from the standard config.py" +
@@ -499,14 +497,16 @@ for j in range(len(visibilities["file"])):
     # Plot the best fit model over the data.
     if not iterskip:
         iterskip = [0,len(v)]
+    elif iterskip[0] == -1:
+        iterskip = [0,iterskip[1]]
     elif iterskip[1] == -1:
         iterskip = [iterskip[0],len(v)]
-
     numchans = int(iterskip[1]-iterskip[0])
+
     if numcols < numchans:
         chanpul = round(numchans/numcols)
-    elif (numcols == -1) or (numcols > numchans) or args.gr:
-        chanpul = numchans
+    else:
+        chanpul = 1
     channels = range(iterskip[0],iterskip[1],chanpul)
     fig, ax = plt.subplots(nrows=numrows, ncols=len(channels), sharex=True, sharey=True)
 
@@ -575,7 +575,7 @@ for j in range(len(visibilities["file"])):
 
                 residuals -= m.images[visibilities["lam"][j]].image[ymin:ymax,xmin:xmax,ind,0]
 
-                residuals[residuals < 0] = 0.
+                #residuals[residuals < 0] = 0.
                 allres.append(residuals)
                 print('STD: {}'.format(numpy.std(m.images[visibilities["lam"][j]].image[ymin:ymax,xmin:xmax,ind,0])))
                 levels = numpy.array(sf)*(2.3e-03)
@@ -625,13 +625,19 @@ for j in range(len(visibilities["file"])):
 
     # Adjust the plot and save it.
 
-    fig.set_size_inches((10.,3.125))
+    fig.set_size_inches((16,5))
     fig.subplots_adjust(left=0.07, right=0.98, top=0.98, bottom=0.15, \
             wspace=0.0,hspace=0.0)
 
     # Adjust the figure and save.
 
     fig.savefig("{0}_{1}_{2:s}.pdf".format('Channelplot',args.source,visibilities["lam"][j]))
-    numpy.save('residuals_{0}_{1:s}.npy'.format(args.source,visibilities["lam"][j]),np.array(allres))
+    numpy.save('residuals_{0}_{1:s}.npy'.format(args.source,visibilities["lam"][j]),numpy.array(allres))
     plt.clf()
-    
+    if args.gr:
+        from astropy.io import fits
+        os.system('rm -f residuals_{0}_{1:s}.fits'.format(args.source,visibilities["lam"][j]))
+        hdu = fits.PrimaryHDU(numpy.array(allres))
+        hdulist = fits.HDUList([hdu])
+        hdulist[0].header = deepcopy(visibilities["image"][j].header)
+        hdulist.writeto('residuals_{0}_{1:s}.fits'.format(args.source,visibilities["lam"][j]))
