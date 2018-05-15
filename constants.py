@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+'''
+Name  : Constants, constants.py
+Author: Nickalas Reynolds
+Date  : Fall 2017
+Misc  : Misc constants to be used
+'''
+
 # %&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&
 # CGS PHYSICAL CONSTANTS
 # %&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&
