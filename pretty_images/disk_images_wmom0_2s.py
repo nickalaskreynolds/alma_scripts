@@ -18,6 +18,11 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    redimage,redstart,redinterval,rednoise,showredimage,blueimage,bluestart,\
    blueinterval,bluenoise,showblueimage,colororgray,colormap,plotlabel,textcolor,\
    ra1,dec1,ra2,dec2,pa1,pa2,extension):
+
+   dele = mpl.figure(figsize=(7,7))
+   f = aplpy.FITSFigure(redimage, figure=dele)
+   f.add_beam()
+
    def standardStuff():
       gc1.axis_labels.set_font(size='x-large')
       gc1.tick_labels.set_style('colons')
@@ -29,7 +34,6 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
       gc1.axis_labels.set_ypad(-20)
       #gc1.tick_labels.hide()
       #gc1.ticks.hide()
-
       gc1.add_scalebar(scalebar/3600.0,color=textcolor)
       gc1.scalebar.set_corner('bottom left')
       gc1.scalebar.set_label(str(scalebar)+'" ('+str(scalebar*distance)+' AU)')
@@ -37,6 +41,8 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
       gc1.scalebar.set_font_size('xx-large')
 
       gc1.add_beam()
+      for x in f.beam._base_settings:
+          gc1.beam._base_settings[x] = f.beam._base_settings[x]
       gc1.beam.set_corner('bottom right')
       gc1.beam.set_color(textcolor)
       gc1.beam.set_hatch('+')
@@ -186,7 +192,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    #image=image+'cut.fits'
 
    #print name, image, ra,dec
-   gc1 = aplpy.FITSFigure(image, figure=fig, subplot=[0.15+dx,0.1+dy,0.7,0.9])
+   gc1 = aplpy.FITSFigure(image, figure=fig)
 
    if colororgray == 'color':
       gc1.show_colorscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,cmap=colormap)
@@ -208,9 +214,9 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
    gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
-   gc1.add_colorbar()
-   gc1.colorbar.set_width(0.1)
-   gc1.colorbar.set_location('right')
+   #gc1.add_colorbar()
+   #gc1.colorbar.set_width(0.1)
+   #gc1.colorbar.set_location('right')
 
    standardStuff()
 

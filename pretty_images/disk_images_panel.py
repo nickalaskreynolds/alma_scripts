@@ -23,7 +23,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
       gc1.ticks.show()
       gc1.axis_labels.set_ypad(-20)
       #gc1.tick_labels.hide()
-      gc1.ticks.hide()
+      #gc1.ticks.hide()
 
       gc1.add_scalebar(scalebar/3600.0,color=textcolor)
       gc1.scalebar.set_corner('bottom left')
@@ -121,13 +121,13 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    #image=image+'cut.fits'
 
    #print name, image, ra,dec
-   gc1 = aplpy.FITSFigure(image, figure=fig, subplot=[0.15+dx,0.1+dy,0.7,0.9])
+   gc1 = aplpy.FITSFigure(image, figure=fig)#, subplot=[0.15+dx,0.1+dy,0.7,0.9])
 
    if colororgray == 'color':
       gc1.show_colorscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,cmap=colormap)
    if colororgray == 'gray':
       gc1.show_grayscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,invert=True)
-
+   
    gc1.recenter(ra,dec,width=(size/3600.0),height=(size/3600.0))
 
    if showsources == 'y':
@@ -136,11 +136,11 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
    gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
-
+   '''
    gc1.add_colorbar()
    gc1.colorbar.set_width(0.1)
    gc1.colorbar.set_location('right')
-
+   '''
    standardStuff()
 
    if pa < 360.0 and showoutflow == 'y':
