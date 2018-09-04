@@ -1,5 +1,4 @@
 import aplpy
-#print aplpy.version.version
 import numpy as np
 import pylab as P
 import matplotlib.pyplot as mpl
@@ -19,7 +18,9 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    blueinterval,bluenoise,showblueimage,colororgray,colormap,plotlabel,textcolor,\
    ra1,dec1,ra2,dec2,pa1,pa2,extension):
 
-   dele = mpl.figure(figsize=(7,7))
+   xsize,ysize = size
+   size = xsize
+   dele = mpl.figure(figsize=(7,7*ysize/xsize))
    f = aplpy.FITSFigure(redimage, figure=dele)
    f.add_beam()
 
@@ -183,7 +184,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
       
       return contours
 
-   fig = mpl.figure(figsize=(7,7))
+   fig = mpl.figure(figsize=(7,7*ysize/xsize))
 
    dx=0.0
    dy=0.0
@@ -199,7 +200,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    if colororgray == 'gray':
       gc1.show_grayscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,invert=True)
 
-   gc1.recenter(ra,dec,width=(size/3600.0),height=(size/3600.0))
+   gc1.recenter(ra,dec,width=(xsize/3600.0),height=(ysize/3600.0))
 
    if showsources == 'y':
       mainsource,sourcename,ra_src,dra_junk,dec_src,ddec_junk,freq9_junk,intflux9_junk,eintflux9_junk,pflux9_junk,rms9_junk,freq8_junk,intflux8_junk,eintflux8_junk,pflux8_junk,rms8_junk,freq10_junk,intflux10_junk,eintflux10_junk,pflux10_junk,rms10_junk,spindex_junk,espindex_junk,pspindex_junk,epspindex_junk=readcol('/data2/EVLA/Perseus/FluxTable/all-fitresults-multiples.txt',twod=False)
@@ -211,8 +212,12 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
          gc1.show_markers(ra_src[:],dec_src[:],c='red',marker='+',zorder=20)
 
 
-   gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
-   gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
+   if len(name) > 1:
+      print(len(name),name)
+      gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
+   if len(plotlabel) > 1:
+      print(len(plotlabel),plotlabel)
+      gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
    #gc1.add_colorbar()
    #gc1.colorbar.set_width(0.1)
@@ -237,6 +242,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,\
    #os.system('rm -rf '+ image)
    #os.system('rm -rf '+ redimage)
    #os.system('rm -rf '+ blueimage)
+   mpl.tight_layout()
 
-   fig.savefig(outfilename,dpi=400,adjust_bbox=True,format='pdf')
+   fig.savefig(outfilename,dpi=400,adjust_bbox=True,format='png')
 

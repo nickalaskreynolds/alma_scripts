@@ -23,6 +23,24 @@ outputvis          =  'L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.375kl'
 go()
 
 default(mstransform)
+vis                = 'L1448IRS3B.C17O.ms.selfcal.contsub.concat'
+keepflags          =  False
+timebin            =  "10s"
+timeaverage        =  True
+mode               =  "velocity"
+nchan              =  55
+start              =  '-0.5km/s'
+width              =  '0.163km/s'
+combinespws        =  True
+regridms           =  True
+datacolumn         =  "data"
+restfreq           =  "337061.104MHz"
+outframe           =  "lsrk"
+outputvis          =  'L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk'
+go()
+
+
+default(mstransform)
 vis                = 'L1448IRS3B.H13CN.ms.selfcal.contsub.concat'
 keepflags          =  False
 timebin            =  "30s"

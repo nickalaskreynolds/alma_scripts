@@ -43,7 +43,7 @@ ncpus = 4
 
 # Get the source name and check that it has been set correctly.
 
-source = "NSFSPG"
+source = "L1448"
 
 ################################################################################
 #
@@ -294,7 +294,6 @@ sys.path.insert(0, '')
 from config import *
 
 # Set up the places where we will put all of the data.
-
 visibilities["data"] = []
 visibilities["data1d"] = []
 visibilities["image"] = []
@@ -425,9 +424,9 @@ for j in range(len(visibilities["file"])):
 
     # Plot the best fit model over the data.
 
-    fig, ax = plt.subplots(nrows=2, ncols=7, sharex=True, sharey=True)
+    fig, ax = plt.subplots(nrows=3, ncols=7, sharex=True, sharey=True)
 
-    for n in range(2):
+    for n in range(3):
         if n == 0:
             plot_image = visibilities["image"][j]
 
@@ -552,6 +551,7 @@ for j in range(len(visibilities["file"])):
 
             residuals.real -= m.visibilities[visibilities["lam"][j]].real
             residuals.imag -= m.visibilities[visibilities["lam"][j]].imag
+            residuals.write(filename='fullresidual.hdf5')
 
             residual_image = uv.invert(residuals, \
                     imsize=visibilities["image_npix"][j], \
@@ -667,6 +667,6 @@ for j in range(len(visibilities["file"])):
 
     # Adjust the figure and save.
 
-    fig.savefig("HOPS-370_{0:s}.pdf".format(visibilities["lam"][j]))
+    fig.savefig("DEL_{0:s}.pdf".format(visibilities["lam"][j]))
 
     plt.clf()

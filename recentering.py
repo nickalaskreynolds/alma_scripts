@@ -12,6 +12,22 @@ phasecenter='J2000 03h25m36.502 30d45m21.866'
 go()
 
 default(fixvis)
+vis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.375kl'
+outputvis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.375kl.wide'
+phasecenter='J2000 03h25m36.502 30d45m21.866'
+go()
+
+
+#--
+default(fixvis)
+vis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk'
+outputvis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.wide'
+phasecenter='J2000 03h25m36.502 30d45m21.866'
+go()
+
+
+
+default(fixvis)
 vis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.lsrk.tavg.chavg'
 outputvis='L1448IRS3B.C17O.ms.selfcal.contsub.concat.triplet'
 phasecenter='J2000 03h25m36.324 30d45m14.941'

@@ -18,7 +18,9 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
    showredimage,blueimage,bluestart,blueinterval,bluenoise,showblueimage,\
    colororgray,colormap,plotlabel,textcolor,extension):
 
-   dele = mpl.figure(figsize=(7,7))
+   xsize,ysize = size
+   size = xsize
+   dele = mpl.figure(figsize=(7,7*ysize/xsize))
    f = aplpy.FITSFigure(redimage, figure=dele)
    f.add_beam()
 
@@ -120,7 +122,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
       
       return contours
 
-   fig = mpl.figure(figsize=(16,12))
+   fig = mpl.figure(figsize=(7,7*ysize/xsize))
 
    dx=0.0
    dy=0.0
@@ -136,7 +138,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
    if colororgray == 'gray':
       gc1.show_grayscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,invert=True)
 
-   gc1.recenter(ra,dec,width=(size/3600.0),height=(size/3600.0))
+   gc1.recenter(ra,dec,width=(xsize/3600.0),height=(ysize/3600.0))
 
    if showsources == 'y':
       mainsource,sourcename,ra_src,dra_junk,dec_src,ddec_junk,freq9_junk,intflux9_junk,eintflux9_junk,pflux9_junk,rms9_junk,freq8_junk,intflux8_junk,eintflux8_junk,pflux8_junk,rms8_junk,freq10_junk,intflux10_junk,eintflux10_junk,pflux10_junk,rms10_junk,spindex_junk,espindex_junk,pspindex_junk,epspindex_junk=readcol('/data2/EVLA/Perseus/FluxTable/all-fitresults-multiples.txt',twod=False)
@@ -148,8 +150,12 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
          gc1.show_markers(ra_src[:],dec_src[:],c='red',marker='+',zorder=20)
 
 
-   gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
-   gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
+   if len(name) > 1:
+      print(len(name))
+      gc1.add_label(0.5, 0.95, name, relative=True,size='x-large',color=textcolor,weight='heavy')
+   if len(plotlabel) > 1:
+      print(len(plotlabel))
+      gc1.add_label(0.1, 0.95, plotlabel, relative=True,size='x-large',color=textcolor,weight='heavy')
    #gc1.add_label(0.5, 0.875, r'$\Delta$'+separation, relative=True,size='large',color='white',weight='heavy')
 
    #gc1.add_colorbar()
@@ -173,6 +179,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,\
    #os.system('rm -rf '+ image)
    #os.system('rm -rf '+ redimage)
    #os.system('rm -rf '+ blueimage)
+   mpl.tight_layout()
 
    fig.savefig(outfilename,dpi=400,adjust_bbox=True,format=extension)
 

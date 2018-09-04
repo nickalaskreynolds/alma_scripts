@@ -13,6 +13,8 @@ from astropy.io import fits
 
 def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,name,pa,\
    showoutflow,sigma,showcontours,showsources,imagestretch,colororgray,colormap,plotlabel,textcolor,extension):
+   xsize,ysize = size
+   size = xsize
    def standardStuff():
       gc1.axis_labels.set_font(size='x-large')
       gc1.tick_labels.set_style('colons')
@@ -112,7 +114,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
 
    contours=[-6.0*sigma,-3.0*sigma,3.0*sigma,6.0*sigma,9.0*sigma,12.0*sigma,15.0*sigma,20.0*sigma,25.0*sigma,30.0*sigma,35.0*sigma,40.0*sigma,50.0*sigma,60.0*sigma,70.0*sigma,80.0*sigma,90.0*sigma,100.0*sigma,150.0*sigma]
 
-   fig = mpl.figure(figsize=(7,7))
+   fig = mpl.figure(figsize=(7,7*ysize/xsize))
 
    dx=0.0
    dy=0.0
@@ -128,7 +130,7 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    if colororgray == 'gray':
       gc1.show_grayscale(vmin=minpixval,vmax=maxpixval,stretch=imagestretch,invert=True)
    
-   gc1.recenter(ra,dec,width=(size/3600.0),height=(size/3600.0))
+   gc1.recenter(ra,dec,width=(xsize/3600.0),height=(ysize/3600.0))
 
    if showsources == 'y':
       mainsource,sourcename,ra_src,dra_junk,dec_src,ddec_junk,freq9_junk,intflux9_junk,eintflux9_junk,pflux9_junk,rms9_junk,freq8_junk,intflux8_junk,eintflux8_junk,pflux8_junk,rms8_junk,freq10_junk,intflux10_junk,eintflux10_junk,pflux10_junk,rms10_junk,spindex_junk,espindex_junk,pspindex_junk,epspindex_junk=readcol('/data2/EVLA/Perseus/FluxTable/all-fitresults-multiples.txt',twod=False)
@@ -152,5 +154,6 @@ def main(image,outfilename,ra,dec,minpixval,maxpixval,size,scalebar,distance,nam
    #os.system('rm -rf '+ image)
    #os.system('rm -rf '+ redimage)
    #os.system('rm -rf '+ blueimage)
+   mpl.tight_layout()
 
-   fig.savefig(outfilename,dpi=400,adjust_bbox=True,format='pdf')
+   fig.savefig(outfilename,dpi=400,adjust_bbox=True,format='png')
